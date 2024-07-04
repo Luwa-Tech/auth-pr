@@ -1,14 +1,12 @@
-import mongoose from "mongoose";
+import { DataSource } from "typeorm";
+import { User } from "../entity/User";
 
-const connectToDB = async () => {
-    try {
-        const db_uri = process.env.DB_URI;
-        if (db_uri) {
-            await mongoose.connect(db_uri);
-        }
-    } catch (err) {
-        console.error(err);
-    }
-}
+const ServerDataSource = new DataSource({
+    type: "postgres",
+    url: process.env.PG_EXTERNAL_URI,
+    entities: [User],
+    synchronize: true,
+    logging: true,
+})
 
-export default connectToDB;
+export default ServerDataSource;

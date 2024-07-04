@@ -1,25 +1,28 @@
 import { Request, Response } from "express-serve-static-core";
-import User from "../model/User";
+import { User } from "../entity/User";
 import { matchedData } from "express-validator";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import ServerDataSource from "../config/databaseConn";
 
 
 export const registerNewUser = async (req: Request, res: Response) => {
     const data = matchedData(req);
-    const findUser = await User.findOne({ email: data.email });
+    const findUser = await ServerDataSource.getRepository(User).findOneBy({
+        email: data.email
+    })
     if (findUser) {
         return res.status(409).json({ "message": "Email already in use" });
     }
-
+ 
     try {
         const hashedPwd = await bcrypt.hash(data.password, 10);
-        const results = await User.create({
+        const newUser = await ServerDataSource.getRepository(User).create({
             email: data.email,
             password: hashedPwd
         });
 
-        await results.save();
+        await ServerDataSource.getRepository(User).save(newUser);
 
         res.status(201).json({ "message": "User created successfully" });
     } catch (err) {
@@ -30,7 +33,9 @@ export const registerNewUser = async (req: Request, res: Response) => {
 
 export const loginUser = async (req: Request, res: Response) => {
     const data = matchedData(req);
-    const findUser = await User.findOne({ email: data.email });
+    const findUser = await ServerDataSource.getRepository(User).findOneBy({
+        email: data.email
+    });
     if (!findUser) {
         return res.status(400).json({ "message": "User does not exist" });
     }
@@ -43,7 +48,7 @@ export const loginUser = async (req: Request, res: Response) => {
     try {
         const accessKey = process.env.ACCESS_KEY;
         if (accessKey) {
-            const token = jwt.sign({ id: findUser._id }, accessKey, { expiresIn: "1h" });
+            const token = jwt.sign({ id: findUser.id }, accessKey, { expiresIn: "1h" });
 
             return res.cookie("access_token", token, {
                 httpOnly: true,
