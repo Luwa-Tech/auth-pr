@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import logger from "../log/logger";
 
 const connectToDB = async () => {
     try {
@@ -7,7 +8,7 @@ const connectToDB = async () => {
             await mongoose.connect(db_uri);
         }
     } catch (err) {
-        console.error(err);
+        logger.error(err);
     }
 }
 

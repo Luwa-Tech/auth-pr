@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import connectToDB from "./config/databaseConn";
 import mongoose from "mongoose";
 import userRouter from "./routes/user";
+import logger from "./log/logger";
 
 dotenv.config();
 
@@ -22,6 +23,6 @@ server.use("/api/v1/users", userRouter);
 
 mongoose.connection.once("open", () => {
     server.listen(port, () => {
-        console.log(`Server running on ${port} successfully`);
+        logger.info(`Server running on ${port} successfully`);
     })
 })
