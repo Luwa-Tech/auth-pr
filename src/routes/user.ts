@@ -1,11 +1,15 @@
 import express from "express";
 import { validations, validateRequestBody } from "../middleware/validateRequestBody";
-import { registerNewUser, loginUser, logoutUser } from "../handlers/userHandler";
-import authoriseUser from "../middleware/authoriseUser";
+import UserHandler from "../handlers/userHandler";
+import UserService from "../service/userService";
+// import authoriseUser from "../middleware/authoriseUser";
 const router = express.Router();
 
-router.post("/register", validateRequestBody(validations), registerNewUser)
-router.post("/login", validateRequestBody(validations), loginUser)
-router.get("/logout", logoutUser)
+const userService = new UserService()
+const userHandler = new UserHandler(userService)
+
+router.post("/register", validateRequestBody(validations), userHandler.registerNewUser)
+router.post("/login", validateRequestBody(validations), userHandler.loginUser)
+router.get("/logout", userHandler.logoutUser)
 
 export default router;

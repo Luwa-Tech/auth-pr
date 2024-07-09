@@ -1,5 +1,5 @@
 import winston from "winston";
-const { combine, timestamp, errors, printf, colorize, cli } = winston.format;
+const { combine, timestamp, errors, printf, cli } = winston.format;
 
 const logger = winston.createLogger({
     level: "http",
@@ -10,7 +10,7 @@ const logger = winston.createLogger({
           format: 'hh:mm:ss A',
         }),
         // fix: undefinedIncoming request at /login
-        printf((info) => `[${info.timestamp}] ${info.level}:${info.message}`)
+        printf((info) => `[${info.timestamp}] ${info.level}: ${info.message}`)
     ),
     transports: [new winston.transports.Console()],
 })
