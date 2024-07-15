@@ -16,7 +16,6 @@ class UserHandler {
         const data = matchedData(req);
 
         const findUser = await this.userService.getUser(data.email);
-        console.log(findUser)
         if (findUser) {
             logger.warn(`Registration attempt failed: Email ${data.email} already in use`);
             res.status(409).json({ "message": "Email already in use" });
